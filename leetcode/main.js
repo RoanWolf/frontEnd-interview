@@ -1,10 +1,27 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // LeetCode 100 题分类和题目列表
 const categories = {
-  "Array": [
+  哈希: [
     { num: 1, title: "两数之和" },
+    {
+      num: 49,
+      title: "字母异位词分组",
+    },
+    {
+      num: 128,
+      title: "最长连续序列",
+    },
+  ],
+
+  双指针: [
+    { num: 283, title: "移动零" },
+    { num: 15, title: "三数之和" },
+    { num: 11, title: "盛最多水的容器" },
+    { num: 42, title: "接雨水" },
+  ],
+  Array: [
     { num: 167, title: "两数之和 II - 输入有序数组" },
     { num: 121, title: "买卖股票的最佳时机" },
     { num: 122, title: "买卖股票的最佳时机 II" },
@@ -19,7 +36,7 @@ const categories = {
     { num: 561, title: "数组拆分" },
     { num: 48, title: "旋转图像" },
   ],
-  "LinkedList": [
+  LinkedList: [
     { num: 206, title: "反转链表" },
     { num: 19, title: "删除链表的倒数第N个节点" },
     { num: 21, title: "合并两个有序链表" },
@@ -31,7 +48,7 @@ const categories = {
     { num: 234, title: "回文链表" },
     { num: 142, title: "链表中环的入口节点" },
   ],
-  "BinaryTree": [
+  BinaryTree: [
     { num: 104, title: "二叉树的最大深度" },
     { num: 111, title: "二叉树的最小深度" },
     { num: 101, title: "对称二叉树" },
@@ -43,7 +60,7 @@ const categories = {
     { num: 701, title: "二叉搜索树的插入操作" },
     { num: 543, title: "二叉树的直径" },
   ],
-  "DynamicProgramming": [
+  DynamicProgramming: [
     { num: 70, title: "爬楼梯" },
     { num: 1143, title: "最长公共子序列" },
     { num: 322, title: "零钱兑换" },
@@ -55,7 +72,7 @@ const categories = {
     { num: 53, title: "最大子序列和" },
     { num: 416, title: "背包问题" },
   ],
-  "SortingAndSearching": [
+  SortingAndSearching: [
     { num: 704, title: "二分查找" },
     { num: 153, title: "寻找旋转排序数组中的最小值" },
     { num: 162, title: "查找峰值" },
@@ -67,7 +84,7 @@ const categories = {
     { num: 4, title: "寻找两个正序数组的中位数" },
     { num: 208, title: "实现 Trie.js" },
   ],
-  "Backtracking": [
+  Backtracking: [
     { num: 46, title: "全排列" },
     { num: 78, title: "子集" },
     { num: 784, title: "字母大小写全排列" },
@@ -79,7 +96,7 @@ const categories = {
     { num: 51, title: "求解 N 皇后问题" },
     { num: 52, title: "求解 N 皇后 II" },
   ],
-  "Math": [
+  Math: [
     { num: 9, title: "回文数" },
     { num: 13, title: "罗马数字转整数" },
     { num: 7, title: "整数反转" },
@@ -91,7 +108,7 @@ const categories = {
     { num: 476, title: "数字的补码" },
     { num: 205, title: "最大公约数和最小公倍数" },
   ],
-  "Stack": [
+  Stack: [
     { num: 20, title: "有效的括号" },
     { num: 155, title: "最小栈" },
     { num: 84, title: "柱状图中最大的矩形" },
@@ -102,7 +119,7 @@ const categories = {
     { num: 225, title: "用队列实现栈" },
     { num: 394, title: "解码字符串" },
     { num: 32, title: "最长有效括号" },
-  ]
+  ],
 };
 
 // 创建文件夹和文件的函数
