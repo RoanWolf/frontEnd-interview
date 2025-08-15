@@ -39,8 +39,3 @@ var twoSum = function (nums, target) {
 
 
 };
-
-let nums = [3 , 2 ,4];
-let target = 6;
-let result = twoSum(nums, target);
-console.log(result);  // 输出：[0, 1]
