@@ -6,7 +6,8 @@ var dailyTemperatures = function (a) {
   const n = a.length;
   const result = new Array(n).fill(0); 
   const stack = []; 
-
+// 找右边第一个大于a[i] 的index 
+// 单调栈模板题
   for (let i = 0; i < n; ++i) {
     // 小压大 栈
     while (stack.length > 0 && a[stack.at(-1)] < a[i]) {
