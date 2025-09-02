@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+  </head>
+  <body>
+    <input type="file" id="file" />
+    <button id="uploadBtn">Upload</button>
+
+    <script>
+      const input = document.getElementById("file");
+      const btn = document.getElementById("uploadBtn");
+
+      let file = null;
+      input.addEventListener("change", (e) => {
+        file = e.target.files[0];
+      });
+
+      btn.addEventListener("click", async () => {
+        if (!file) return alert("Please select a file");
+
+        const chunkSize = 1 * 1024 * 1024; // 1MB per chunk
+        const chunks = Math.ceil(file.size / chunkSize);
+
+        // Upload all chunks
+        const uploadTasks = [];
+        for (let i = 0; i < chunks; i++) {
+          const start = i * chunkSize;
+          const end = Math.min(file.size, start + chunkSize);
+          const blob = file.slice(start, end);
+
+          const formData = new FormData();
+          formData.append("partFile", blob, `${file.name}-${i}`); // Unique chunk name
+          formData.append("index", i);
+          formData.append("fileName", file.name); // Include original filename
+
+          const task = fetch("http://localhost:3000/upload", {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.code !== 200) {
+                throw new Error(`Chunk ${i} upload failed: ${data.message}`);
+              }
+              return data;
+            });
+
+          uploadTasks.push(task);
+        }
+
+        try {
+          // Wait for all chunks to upload
+          await Promise.all(uploadTasks);
+          console.log("All chunks uploaded successfully");
+
+          // Request backend to merge chunks
+          const mergeResponse = await fetch("http://localhost:3000/merge", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileName: file.name,
+              total: chunks,
+            }),
+          });
+
+          const mergeData = await mergeResponse.json();
+          if (mergeData.code === 200) {
+            console.log("Merge completed:", mergeData);
+            alert("File uploaded and merged successfully!");
+          } else {
+            throw new Error(`Merge failed: ${mergeData.message}`);
+          }
+        } catch (err) {
+          console.error("Upload or merge failed:", err);
+          alert(`Error: ${err.message}`);
+        }
+      });
+    </script>
+  </body>
+</html>
