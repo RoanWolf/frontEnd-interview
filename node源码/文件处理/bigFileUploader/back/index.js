@@ -1,47 +1,61 @@
+import { fileURLToPath } from "node:url";
 import path from "node:path";
-import fs from "node:fs/promises";
 
 import express from "express";
-import cors from "cors";
 import multer from "multer";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-app.use(cors());
-app.use(express.json()); // Parse JSON request body
+app.use(express.json());
+// const corsOptions = {
+//   origin: [
+//     "http://localhost:5501",
+//     "http://localhost:5500",
+//     "http://localhost:5502",
+//     "http://localhost:5503",
+//     "http://127.0.0.1:5501",
+//     "http://127.0.0.1:5500",
+//     "http://127.0.0.1:5502",
+//     "http://127.0.0.1:5503",
+//   ],
+//   methods: ["POST", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "X-File-MD5"],
+//   maxAge: 86400,
+//   credentials: false,
+// };
 
-const uploadsDir = path.join(process.cwd(), "uploads");
-const chunksDir = path.join(uploadsDir, "_chunks");
+// app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, X-File-MD5");
 
-// Ensure directories exist
-async function ensureDirectories() {
-  try {
-    await fs.mkdir(uploadsDir, { recursive: true });
-    await fs.mkdir(chunksDir, { recursive: true });
-  } catch (err) {
-    console.error("Failed to create directories:", err);
+  if (req.method === "OPTIONS") {
+    res.status(204).end(); // 立即返回 204，无需继续处理
+    return;
   }
-}
-ensureDirectories();
+  next();
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, chunksDir);
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname); // e.g., "originalFileName-index"
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
-const upload = multer({ storage });
-
-app.post("/upload", upload.single("partFile"), (req, res) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ code: 400, message: "No file part provided" });
+const upload = multer({ storage: storage });
+app.post("/file", upload.single("file"), (req, res) => {
+  if (req.file) {
+    res.send("ok");
+  } else {
+    res.send("error");
   }
-  console.log(`Chunk ${req.body.index} uploaded for ${req.body.fileName}`);
-  res.json({ code: 200, message: "Chunk uploaded successfully" });
 });
 
-
-app.listen(3000, () => console.log("Server is running on port 3000"));
+app.listen(3000, () => {
+  console.log("ok");
+});
