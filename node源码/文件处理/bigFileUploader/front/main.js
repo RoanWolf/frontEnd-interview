@@ -8,24 +8,22 @@ input.addEventListener("change", (e) => {
   file = input.files[0];
 });
 
-btn.addEventListener("click", (e) => {
+btn.addEventListener("click", async (e) => {
   e.preventDefault();
-  if (file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    axios({
-      method: "POST",
-      url: "http://localhost:3000/file",
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((response) => alert("上传成功: " + JSON.stringify(response.data)))
-
-      .catch((error) => {
-        alert("上传失败: " + error.message);
-      });
+  if (!file) {
+    alert("请选择文件");
+    return;
   }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", file.name);
+  axios({
+    method: "POST",
+    url: "http://localhost:3000/file",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }).then((response) => alert("上传成功: " + JSON.stringify(response.data)));
 });
