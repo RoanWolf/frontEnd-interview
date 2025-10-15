@@ -10,3 +10,10 @@ let user = {
 
 // 转换演示：
 console.log(String(user)); //hint: string  {name: "John"}
+
+console.log('--------------------');
+
+
+let str = "Hello";
+str.test = 5;
+console.log(str.test); // undefined

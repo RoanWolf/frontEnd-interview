@@ -17,3 +17,4 @@ console.log(user.hasOwnProperty('age')); // true
 for(const key in user){
     console.log(key); // 1, age, name
 }
+
